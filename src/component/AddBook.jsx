@@ -1,8 +1,14 @@
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { useState } from 'react';
-export default function AddBook({ addNewBook }) {
+import { useEffect, useState } from 'react';
+export default function AddBook({ addNewBook, editBook }) {
     let [data, setData] = useState({ bookId: 0, bookName: "", authorName: "", bookDesc: "" });
+
+    useEffect(() => {
+        if (editBook) {
+            setData({ bookName: editBook.bookName, authorName: editBook.authorName, bookDesc: editBook.bookDesc })
+        }
+    }, [editBook])
 
     let handleInput = (e) => {
         setData((prevValue) => {
@@ -12,6 +18,8 @@ export default function AddBook({ addNewBook }) {
 
     let handleSubmit = (e) => {
         e.preventDefault();
+        console.log(data);
+
         addNewBook(data);
         setData({ bookId: 0, bookName: "", authorName: "", bookDesc: "", isDone: false })
     }
@@ -19,7 +27,7 @@ export default function AddBook({ addNewBook }) {
     return (
         <div>
             <h1 className='text-center text-white py-3 mt-2 shadow-lg fw-bold' style={{ background: "#12c2e9", background: "-webkit-linear-gradient(to right, #12c2e9, #c471ed, #f64f59)", background: "linear-gradient(to right, #12c2e9, #c471ed, #f64f59)" }} >Add Book Details</h1>
-            <Form className='border border-2 rounded-2 border-warning p-2 text-white' style={{ background: "linear-gradient(to right, #2C5364, #203A43, #0F2027)" }} onSubmit={handleSubmit}>
+            <Form className='border border-2 rounded-2 border-warning p-2 text-white' style={editBook.length === 0 ? { background: "linear-gradient(to right, #2C5364, #203A43, #0F2027)" } : { background: "linear-gradient(to left, #f7b733, #fc4a1a)" }} onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                     <Form.Label>Book Name</Form.Label>
                     <Form.Control type="text" placeholder="book name..." value={data.bookName} name="bookName" onChange={handleInput} />

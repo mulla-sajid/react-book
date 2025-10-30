@@ -1,18 +1,29 @@
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AddBook from './AddBook';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function Todo() {
-    let [data, setData] = useState([{ bookId: uuidv4(), bookName: "Hardy Boys", authorName: "Sam Flex", bookDesc: "Best adventure book", isDone: false }])
+    let [data, setData] = useState([])
+    let [editBook, setEditbook] = useState("");
+
+    useEffect(function showFirst() {
+        setData([{ bookId: uuidv4(), bookName: "Hardy Boys", authorName: "Sam Flex", bookDesc: "Best adventure book", isDone: false }, { bookId: uuidv4(), bookName: "Tenali Raman", authorName: "Rajesh", bookDesc: "Best folk tales book", isDone: false }])
+    }, [])
 
     let addNewBook = (book) => {
-        const newBook = { ...book, bookId: uuidv4() };
-        setData((preVal) => {
-            return [...preVal, newBook];
-        })
+        if (editBook) {
+            setData((prevdata) => prevdata.map((b) =>
+                b.bookId === editBook.bookId ? { ...b, bookName: book.bookName, authorName: book.authorName, bookDesc: book.bookDesc, isDone: false } : b
+            ));
+        } else {
+            const newBook = { ...book, bookId: uuidv4() };
+            setData((preVal) => {
+                return [...preVal, newBook];
+            })
+        }
     }
 
     let handleDelete = (id) => {
@@ -25,11 +36,14 @@ export default function Todo() {
         ));
     }
 
-    
+    let handleEdit = (book) => {
+        setEditbook(book)
+    }
+
 
     return (<div>
         <Container>
-            <AddBook addNewBook={addNewBook}></AddBook>
+            <AddBook addNewBook={addNewBook} editBook={editBook}></AddBook>
 
             <h2 className='text-center py-3 mt-2 shadow-lg fw-bold text-white position-sticky mb-2' style={{ background: "linear-gradient(to right, #12c2e9, #c471ed, #f64f59)", zIndex: "1", top: "0" }} >BookDetails!</h2>
             {data.length == 0 ? (
@@ -47,18 +61,19 @@ export default function Todo() {
                             <div ><Button type='submit' onClick={() => handleDelete(book.bookId)} variant="danger" className='me-1 text-black fw-bold' style={{ background: "linear-gradient(to left, #f7797d, #FBD786, #C6FFDD)" }}>Delete</Button>
 
                                 <Button type='submit' onClick={() => handleDone(book.bookId)} variant="danger" className='me-1 text-black fw-bold' style={{ background: "linear-gradient(to left, #f7797d, #FBD786, #C6FFDD)" }}>Mark As Done</Button>
-                            {book.isDone ? <Button type='submit' onClick={() => handleDone(book.bookId)} variant="danger" className='text-black fw-bold' style={{ background: "linear-gradient(to left, #f7797d, #FBD786, #C6FFDD)" }}>Update Book</Button> : "" }
 
-                        </div>
+                                {book.isDone ? <Button type='submit' onClick={() => handleEdit(book)} variant="danger" className='text-black fw-bold' style={{ background: "linear-gradient(to left, #f7797d, #FBD786, #C6FFDD)" }}>Update Book</Button> : ""}
 
-                    </Card.Body>
+                            </div>
+
+                        </Card.Body>
                     </Card>
-        ))
+                ))
 
             )}
 
 
-    </Container>
+        </Container>
 
     </div >
     )
