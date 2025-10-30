@@ -1,3 +1,6 @@
+# Project - Type
+This is a basic react book store manangement system. React bootstrap added. No Redux.
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
